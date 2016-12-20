@@ -1,45 +1,45 @@
 import Foundation
 
-internal struct AsyncMatcherWrapper<T, U where U: Matcher, U.ValueType == T>: Matcher {
+internal struct AsyncMatcherWrapper<T, U>: Matcher where U: Matcher, U.ValueType == T {
     let fullMatcher: U
-    let timeoutInterval: NSTimeInterval
-    let pollInterval: NSTimeInterval
+    let timeoutInterval: TimeInterval
+    let pollInterval: TimeInterval
 
-    init(fullMatcher: U, timeoutInterval: NSTimeInterval = 1, pollInterval: NSTimeInterval = 0.01) {
+    init(fullMatcher: U, timeoutInterval: TimeInterval = 1, pollInterval: TimeInterval = 0.01) {
       self.fullMatcher = fullMatcher
       self.timeoutInterval = timeoutInterval
       self.pollInterval = pollInterval
     }
 
-    func matches(actualExpression: Expression<T>, failureMessage: FailureMessage) -> Bool {
+    func matches(_ actualExpression: Expression<T>, failureMessage: FailureMessage) -> Bool {
         let uncachedExpression = actualExpression.withoutCaching()
         let result = pollBlock(pollInterval: pollInterval, timeoutInterval: timeoutInterval) {
             try self.fullMatcher.matches(uncachedExpression, failureMessage: failureMessage)
         }
         switch (result) {
-        case .Success: return true
-        case .Failure: return false
-        case let .ErrorThrown(error):
+        case .success: return true
+        case .failure: return false
+        case let .errorThrown(error):
             failureMessage.actualValue = "an unexpected error thrown: <\(error)>"
             return false
-        case .Timeout:
+        case .timeout:
             failureMessage.postfixMessage += " (Stall on main thread)."
             return false
         }
     }
 
-    func doesNotMatch(actualExpression: Expression<T>, failureMessage: FailureMessage) -> Bool  {
+    func doesNotMatch(_ actualExpression: Expression<T>, failureMessage: FailureMessage) -> Bool  {
         let uncachedExpression = actualExpression.withoutCaching()
         let result = pollBlock(pollInterval: pollInterval, timeoutInterval: timeoutInterval) {
             try self.fullMatcher.doesNotMatch(uncachedExpression, failureMessage: failureMessage)
         }
         switch (result) {
-        case .Success: return true
-        case .Failure: return false
-        case let .ErrorThrown(error):
+        case .success: return true
+        case .failure: return false
+        case let .errorThrown(error):
             failureMessage.actualValue = "an unexpected error thrown: <\(error)>"
             return false
-        case .Timeout:
+        case .timeout:
             failureMessage.postfixMessage += " (Stall on main thread)."
             return false
         }
@@ -52,7 +52,7 @@ private let toEventuallyRequiresClosureError = FailureMessage(stringValue: "expe
 extension Expectation {
     /// Tests the actual value using a matcher to match by checking continuously
     /// at each pollInterval until the timeout is reached.
-    public func toEventually<U where U: Matcher, U.ValueType == T>(matcher: U, timeout: NSTimeInterval = 1, pollInterval: NSTimeInterval = 0.01, description: String? = nil) {
+    public func toEventually<U>(_ matcher: U, timeout: TimeInterval = 1, pollInterval: TimeInterval = 0.01, description: String? = nil) where U: Matcher, U.ValueType == T {
         if expression.isClosure {
             let (pass, msg) = expressionMatches(
                 expression,
@@ -71,7 +71,7 @@ extension Expectation {
 
     /// Tests the actual value using a matcher to not match by checking
     /// continuously at each pollInterval until the timeout is reached.
-    public func toEventuallyNot<U where U: Matcher, U.ValueType == T>(matcher: U, timeout: NSTimeInterval = 1, pollInterval: NSTimeInterval = 0.01, description: String? = nil) {
+    public func toEventuallyNot<U>(_ matcher: U, timeout: TimeInterval = 1, pollInterval: TimeInterval = 0.01, description: String? = nil) where U: Matcher, U.ValueType == T {
         if expression.isClosure {
             let (pass, msg) = expressionDoesNotMatch(
                 expression,
@@ -92,7 +92,7 @@ extension Expectation {
     /// continuously at each pollInterval until the timeout is reached.
     ///
     /// Alias of toEventuallyNot()
-    public func toNotEventually<U where U: Matcher, U.ValueType == T>(matcher: U, timeout: NSTimeInterval = 1, pollInterval: NSTimeInterval = 0.01, description: String? = nil) {
+    public func toNotEventually<U>(_ matcher: U, timeout: TimeInterval = 1, pollInterval: TimeInterval = 0.01, description: String? = nil) where U: Matcher, U.ValueType == T {
         return toEventuallyNot(matcher, timeout: timeout, pollInterval: pollInterval, description: description)
     }
 }

@@ -1,12 +1,12 @@
 import Foundation
 
-internal enum PollResult : BooleanType {
-    case Success, Failure, Timeout
-    case ErrorThrown(ErrorType)
+internal enum PollResult  {
+    case success, failure, timeout
+    case errorThrown(Error)
 
     var boolValue : Bool {
         switch (self) {
-        case .Success:
+        case .success:
             return true
         default:
             return false
@@ -15,19 +15,21 @@ internal enum PollResult : BooleanType {
 }
 
 internal class RunPromise {
-    var token: dispatch_once_t = 0
+    private lazy var __once: () = {
+            RunPromise.didFinish = false
+        }()
+    var token: Int = 0
     var didFinish = false
     var didFail = false
 
     init() {}
 
     func succeed() {
-        dispatch_once(&self.token) {
-            self.didFinish = false
-        }
+        _ = self.__once
     }
 
-    func fail(block: () -> Void) {
+    func fail(_ block: () -> Void) {
+        // Migrator FIXME: multiple dispatch_once calls using the same dispatch_once_t token cannot be automatically migrated
         dispatch_once(&self.token) {
             self.didFail = true
             block()
@@ -35,13 +37,13 @@ internal class RunPromise {
     }
 }
 
-let killQueue = dispatch_queue_create("nimble.waitUntil.queue", DISPATCH_QUEUE_SERIAL)
+let killQueue = DispatchQueue(label: "nimble.waitUntil.queue", attributes: [])
 
-internal func stopRunLoop(runLoop: NSRunLoop, delay: NSTimeInterval) -> RunPromise {
+internal func stopRunLoop(_ runLoop: RunLoop, delay: TimeInterval) -> RunPromise {
     let promise = RunPromise()
     let killTimeOffset = Int64(CDouble(delay) * CDouble(NSEC_PER_SEC))
-    let killTime = dispatch_time(DISPATCH_TIME_NOW, killTimeOffset)
-    dispatch_after(killTime, killQueue) {
+    let killTime = DispatchTime.now() + Double(killTimeOffset) / Double(NSEC_PER_SEC)
+    killQueue.asyncAfter(deadline: killTime) {
         promise.fail {
             CFRunLoopStop(runLoop.getCFRunLoop())
         }
@@ -49,22 +51,22 @@ internal func stopRunLoop(runLoop: NSRunLoop, delay: NSTimeInterval) -> RunPromi
     return promise
 }
 
-internal func pollBlock(pollInterval pollInterval: NSTimeInterval, timeoutInterval: NSTimeInterval, expression: () throws -> Bool) -> PollResult {
-    let runLoop = NSRunLoop.mainRunLoop()
+internal func pollBlock(pollInterval: TimeInterval, timeoutInterval: TimeInterval, expression: () throws -> Bool) -> PollResult {
+    let runLoop = RunLoop.main
 
     let promise = stopRunLoop(runLoop, delay: min(timeoutInterval, 0.2))
 
-    let startDate = NSDate()
+    let startDate = Date()
 
     // trigger run loop to make sure enqueued tasks don't block our assertion polling
     // the stop run loop task above will abort us if necessary
-    runLoop.runUntilDate(startDate)
-    dispatch_sync(killQueue) {
+    runLoop.run(until: startDate)
+    killQueue.sync {
         promise.succeed()
     }
 
     if promise.didFail {
-        return .Timeout
+        return .timeout
     }
 
     var pass = false
@@ -75,12 +77,12 @@ internal func pollBlock(pollInterval pollInterval: NSTimeInterval, timeoutInterv
                 break
             }
 
-            let runDate = NSDate().dateByAddingTimeInterval(pollInterval)
-            runLoop.runUntilDate(runDate)
-        } while(NSDate().timeIntervalSinceDate(startDate) < timeoutInterval)
+            let runDate = Date().addingTimeInterval(pollInterval)
+            runLoop.run(until: runDate)
+        } while(Date().timeIntervalSince(startDate) < timeoutInterval)
     } catch let error {
-        return .ErrorThrown(error)
+        return .errorThrown(error)
     }
 
-    return pass ? .Success : .Failure
+    return pass ? .success : .failure
 }

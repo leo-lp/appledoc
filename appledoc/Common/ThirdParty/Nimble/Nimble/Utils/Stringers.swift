@@ -1,14 +1,14 @@
 import Foundation
 
 
-internal func identityAsString(value: AnyObject?) -> String {
+internal func identityAsString(_ value: AnyObject?) -> String {
     if value == nil {
         return "nil"
     }
-    return NSString(format: "<%p>", unsafeBitCast(value!, Int.self)).description
+    return NSString(format: "<%p>", unsafeBitCast(value!, to: Int.self)).description
 }
 
-internal func arrayAsString<T>(items: [T], joiner: String = ", ") -> String {
+internal func arrayAsString<T>(_ items: [T], joiner: String = ", ") -> String {
     return items.reduce("") { accum, item in
         let prefix = (accum.isEmpty ? "" : joiner)
         return accum + prefix + "\(stringify(item))"
@@ -19,42 +19,42 @@ internal func arrayAsString<T>(items: [T], joiner: String = ", ") -> String {
     func NMB_stringify() -> String
 }
 
-internal func stringify<S: SequenceType>(value: S) -> String {
-    var generator = value.generate()
+internal func stringify<S: Sequence>(_ value: S) -> String {
+    var generator = value.makeIterator()
     var strings = [String]()
-    var value: S.Generator.Element?
+    var value: S.Iterator.Element?
     repeat {
         value = generator.next()
         if value != nil {
             strings.append(stringify(value))
         }
     } while value != nil
-    let str = strings.joinWithSeparator(", ")
+    let str = strings.joined(separator: ", ")
     return "[\(str)]"
 }
 
 extension NSArray : NMBStringer {
     func NMB_stringify() -> String {
-        let str = self.componentsJoinedByString(", ")
+        let str = self.componentsJoined(by: ", ")
         return "[\(str)]"
     }
 }
 
-internal func stringify<T>(value: T) -> String {
+internal func stringify<T>(_ value: T) -> String {
     if let value = value as? Double {
         return NSString(format: "%.4f", (value)).description
     }
-    return String(value)
+    return String(describing: value)
 }
 
-internal func stringify(value: NMBDoubleConvertible) -> String {
+internal func stringify(_ value: NMBDoubleConvertible) -> String {
     if let value = value as? Double {
         return NSString(format: "%.4f", (value)).description
     }
     return value.stringRepresentation
 }
 
-internal func stringify<T>(value: T?) -> String {
+internal func stringify<T>(_ value: T?) -> String {
     if let unboxed = value {
        return stringify(unboxed)
     }

@@ -22,13 +22,13 @@ public struct AssertionRecord: CustomStringConvertible {
 /// This is useful for testing failure messages for matchers.
 ///
 /// @see AssertionHandler
-public class AssertionRecorder : AssertionHandler {
+open class AssertionRecorder : AssertionHandler {
     /// All the assertions that were captured by this recorder
-    public var assertions = [AssertionRecord]()
+    open var assertions = [AssertionRecord]()
 
     public init() {}
 
-    public func assert(assertion: Bool, message: FailureMessage, location: SourceLocation) {
+    open func assert(_ assertion: Bool, message: FailureMessage, location: SourceLocation) {
         assertions.append(
             AssertionRecord(
                 success: assertion,
@@ -43,13 +43,13 @@ public class AssertionRecorder : AssertionHandler {
 /// Once the closure finishes, then the original Nimble assertion handler is restored.
 ///
 /// @see AssertionHandler
-public func withAssertionHandler(tempAssertionHandler: AssertionHandler, closure: () throws -> Void) {
+public func withAssertionHandler(_ tempAssertionHandler: AssertionHandler, closure: @escaping () throws -> Void) {
     let oldRecorder = NimbleAssertionHandler
     let capturer = NMBExceptionCapture(handler: nil, finally: ({
         NimbleAssertionHandler = oldRecorder
     }))
     NimbleAssertionHandler = tempAssertionHandler
-    capturer.tryBlock {
+    capturer?.try {
         try! closure()
     }
 }
@@ -64,7 +64,7 @@ public func withAssertionHandler(tempAssertionHandler: AssertionHandler, closure
 ///                 assertion handler when this is true. Defaults to false.
 ///
 /// @see gatherFailingExpectations
-public func gatherExpectations(silently silently: Bool = false, closure: () -> Void) -> [AssertionRecord] {
+public func gatherExpectations(silently: Bool = false, closure: @escaping () -> Void) -> [AssertionRecord] {
     let previousRecorder = NimbleAssertionHandler
     let recorder = AssertionRecorder()
     let handlers: [AssertionHandler]
@@ -91,7 +91,7 @@ public func gatherExpectations(silently silently: Bool = false, closure: () -> V
 ///
 /// @see gatherExpectations
 /// @see raiseException source for an example use case.
-public func gatherFailingExpectations(silently silently: Bool = false, closure: () -> Void) -> [AssertionRecord] {
+public func gatherFailingExpectations(silently: Bool = false, closure: @escaping () -> Void) -> [AssertionRecord] {
     let assertions = gatherExpectations(silently: silently, closure: closure)
     return assertions.filter { assertion in
         !assertion.success

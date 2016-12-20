@@ -1577,9 +1577,11 @@
 				TargetAttributes = {
 					734AB7751BEFFEC6007B7A64 = {
 						CreatedOnToolsVersion = 7.1;
+						LastSwiftMigration = 0820;
 					};
 					73F386DB1BF004520044BDBF = {
 						CreatedOnToolsVersion = 7.1;
+						LastSwiftMigration = 0820;
 					};
 				};
 			};
@@ -1891,13 +1893,14 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "${PROJECT_DIR}/appledoc/Common/ThirdParty/libclang/LLVM/Release/include";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/appledoc/Common/ThirdParty/libclang/LLVM/Release/lib";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/appledoc/Common/ThirdParty/libclang/";
 				SWIFT_OBJC_BRIDGING_HEADER = "appledoc/Common/Support/appledoc-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -1933,11 +1936,12 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "${PROJECT_DIR}/appledoc/Common/ThirdParty/libclang/LLVM/Release/include";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/appledoc/Common/ThirdParty/libclang/LLVM/Release/lib";
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				SWIFT_INCLUDE_PATHS = "$(PROJECT_DIR)/appledoc/Common/ThirdParty/libclang/";
 				SWIFT_OBJC_BRIDGING_HEADER = "appledoc/Common/Support/appledoc-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -1947,6 +1951,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -1956,6 +1961,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -1968,6 +1974,7 @@
 				OTHER_LDFLAGS = "-lc++";
 				PRODUCT_BUNDLE_IDENTIFIER = com.gentlebytes.appledoc.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -1980,6 +1987,7 @@
 				OTHER_LDFLAGS = "-lc++";
 				PRODUCT_BUNDLE_IDENTIFIER = com.gentlebytes.appledoc.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

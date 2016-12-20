@@ -8,11 +8,11 @@ final internal class SuiteHooks {
     internal var afters: [AfterSuiteClosure] = []
     internal var aftersAlreadyExecuted = false
 
-    internal func appendBefore(closure: BeforeSuiteClosure) {
+    internal func appendBefore(_ closure: @escaping BeforeSuiteClosure) {
         befores.append(closure)
     }
 
-    internal func appendAfter(closure: AfterSuiteClosure) {
+    internal func appendAfter(_ closure: @escaping AfterSuiteClosure) {
         afters.append(closure)
     }
 

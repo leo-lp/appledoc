@@ -2,20 +2,20 @@ import Foundation
 
 /// Implement this protocol to implement a custom matcher for Swift
 public protocol Matcher {
-    typealias ValueType
-    func matches(actualExpression: Expression<ValueType>, failureMessage: FailureMessage) throws -> Bool
-    func doesNotMatch(actualExpression: Expression<ValueType>, failureMessage: FailureMessage) throws -> Bool
+    associatedtype ValueType
+    func matches(_ actualExpression: Expression<ValueType>, failureMessage: FailureMessage) throws -> Bool
+    func doesNotMatch(_ actualExpression: Expression<ValueType>, failureMessage: FailureMessage) throws -> Bool
 }
 
 /// Objective-C interface to the Swift variant of Matcher.
 @objc public protocol NMBMatcher {
-    func matches(actualBlock: () -> NSObject!, failureMessage: FailureMessage, location: SourceLocation) -> Bool
-    func doesNotMatch(actualBlock: () -> NSObject!, failureMessage: FailureMessage, location: SourceLocation) -> Bool
+    func matches(_ actualBlock: () -> NSObject!, failureMessage: FailureMessage, location: SourceLocation) -> Bool
+    func doesNotMatch(_ actualBlock: () -> NSObject!, failureMessage: FailureMessage, location: SourceLocation) -> Bool
 }
 
 /// Protocol for types that support contain() matcher.
 @objc public protocol NMBContainer {
-    func containsObject(object: AnyObject!) -> Bool
+    func containsObject(_ object: AnyObject!) -> Bool
 }
 extension NSArray : NMBContainer {}
 extension NSSet : NMBContainer {}
@@ -32,7 +32,7 @@ extension NSMapTable : NMBCollection {}
 
 /// Protocol for types that support beginWith(), endWith(), beEmpty() matchers
 @objc public protocol NMBOrderedCollection : NMBCollection {
-    func indexOfObject(object: AnyObject!) -> Int
+    func indexOfObject(_ object: AnyObject!) -> Int
 }
 extension NSArray : NMBOrderedCollection {}
 
@@ -43,15 +43,15 @@ extension NSArray : NMBOrderedCollection {}
 extension NSNumber : NMBDoubleConvertible {
 }
 
-private let dateFormatter: NSDateFormatter = {
-    let formatter = NSDateFormatter()
+private let dateFormatter: DateFormatter = {
+    let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSS"
-    formatter.locale = NSLocale(localeIdentifier: "en_US_POSIX")
+    formatter.locale = Locale(identifier: "en_US_POSIX")
     
     return formatter
     }()
 
-extension NSDate: NMBDoubleConvertible {
+extension Date: NMBDoubleConvertible {
     public var doubleValue: CDouble {
         get {
             return self.timeIntervalSinceReferenceDate
@@ -63,8 +63,8 @@ extension NSDate: NMBDoubleConvertible {
 extension NMBDoubleConvertible {
     public var stringRepresentation: String {
         get {
-            if let date = self as? NSDate {
-                return dateFormatter.stringFromDate(date)
+            if let date = self as? Date {
+                return dateFormatter.string(from: date)
             }
             
             if let debugStringConvertible = self as? CustomDebugStringConvertible {
@@ -85,15 +85,15 @@ extension NMBDoubleConvertible {
 ///
 /// Types that conform to Swift's Comparable protocol will work implicitly too
 @objc public protocol NMBComparable {
-    func NMB_compare(otherObject: NMBComparable!) -> NSComparisonResult
+    func NMB_compare(_ otherObject: NMBComparable!) -> ComparisonResult
 }
 extension NSNumber : NMBComparable {
-    public func NMB_compare(otherObject: NMBComparable!) -> NSComparisonResult {
+    public func NMB_compare(_ otherObject: NMBComparable!) -> ComparisonResult {
         return compare(otherObject as! NSNumber)
     }
 }
 extension NSString : NMBComparable {
-    public func NMB_compare(otherObject: NMBComparable!) -> NSComparisonResult {
+    public func NMB_compare(_ otherObject: NMBComparable!) -> ComparisonResult {
         return compare(otherObject as! String)
     }
 }

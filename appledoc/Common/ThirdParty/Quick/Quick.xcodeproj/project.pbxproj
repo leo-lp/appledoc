@@ -1009,6 +1009,7 @@
 					};
 					DAEB6B8D1943873100289F44 = {
 						CreatedOnToolsVersion = 6.0;
+						LastSwiftMigration = 0820;
 					};
 					DAEB6B981943873100289F44 = {
 						CreatedOnToolsVersion = 6.0;
@@ -1890,6 +1891,7 @@
 				PRODUCT_MODULE_NAME = Quick;
 				PRODUCT_NAME = Quick;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				VALID_ARCHS = x86_64;
 			};
 			name = Debug;
@@ -1915,6 +1917,7 @@
 				PRODUCT_MODULE_NAME = Quick;
 				PRODUCT_NAME = Quick;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
 				VALID_ARCHS = x86_64;
 			};
 			name = Release;

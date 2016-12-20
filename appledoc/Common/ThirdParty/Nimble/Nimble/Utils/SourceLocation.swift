@@ -1,9 +1,9 @@
 import Foundation
 
 
-public class SourceLocation : NSObject {
-    public let file: String
-    public let line: UInt
+open class SourceLocation : NSObject {
+    open let file: String
+    open let line: UInt
 
     override init() {
         file = "Unknown File"
@@ -15,7 +15,7 @@ public class SourceLocation : NSObject {
         self.line = line
     }
 
-    override public var description: String {
+    override open var description: String {
         return "\(file):\(line)"
     }
 }

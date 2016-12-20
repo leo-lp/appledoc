@@ -884,6 +884,7 @@
 					};
 					1F925EAC195C0D6300ED456B = {
 						CreatedOnToolsVersion = 6.0;
+						LastSwiftMigration = 0820;
 					};
 					1F925EB6195C0D6300ED456B = {
 						CreatedOnToolsVersion = 6.0;
@@ -1633,6 +1634,7 @@
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 3.0;
 				VALID_ARCHS = x86_64;
 			};
 			name = Debug;
@@ -1668,6 +1670,7 @@
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 3.0;
 				VALID_ARCHS = x86_64;
 			};
 			name = Release;
